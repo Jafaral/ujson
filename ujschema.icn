@@ -1,0 +1,73 @@
+#
+# ujschema - json schema validation.
+#
+# Author: Jafar Al-Gharaibeh
+#
+# Date: March 2021
+#
+
+link basename
+link options
+link io
+link json
+link ximage
+
+procedure usage()
+    prog := basename(&progname)
+    write("Usage: ", prog, " [options]\n")
+    write(prog, " is a unicon utility for validating a json file given its schema")
+    write("Options:")
+    write("\t -f : json filename")
+    write("\t -s : json schema file, default to <fname-noext>.schema.json")
+    write("\t -h : show this help\n")
+    exit(-1)
+end
+
+procedure main(args)
+    local opts, jfname, sfname, ext
+    opts := options(args, "hs:f:")
+
+    if *opts = 0 then
+       usage()
+
+    # get the json file name, if it is not provided, error out.
+    jfname :=  \opts["f"] | usage()
+
+    # get the schema file
+    if \opts["s"] then
+       sfname :=  opts["s"]
+    else { # default to <fname-noext>.schema.json
+       ext :=  suffix(jfname) # split the name from the extension
+       sfname := ext[1] || ".schema." || ext[2]
+       }
+
+    write("json file  : ", jfname)
+    write("schema file: ", sfname)
+
+    exists(jfname) | stop("file doesn't exist:", jfname)
+    exists(sfname) | stop("file doesn't exist:", sfname)
+
+    js_validate(jfname, sfname)
+end
+
+procedure my_json_error()
+end
+
+procedure js_validate(jfname, sfname)
+   local json_date, json_schema
+   json_data   := jtou(jfname , "f")
+   json_schema := jtou(sfname , "f")
+
+   write("\n")
+   write("json data dump: ")
+   write(ximage(json_data))
+
+   write("\n")
+   write("json schema dump: ")
+   write(ximage(json_schema))
+end
+
+
+
+
+

@@ -1,5 +1,9 @@
 # http://www.gnu.org/software/automake
 
+
+ujschema
+*~
+
 Makefile.in
 /ar-lib
 /mdate-sh
